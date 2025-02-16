@@ -21,7 +21,6 @@ const jackpotElement = document.getElementById("jackpot-amount")
 const betAmountInput = document.getElementById("bet-amount")
 const spinButton = document.getElementById("spin-button")
 const resultText = document.getElementById("result")
-const lever = document.getElementById("lever")
 const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")]
 
 const emojis = ["🍎", "🍋", "🍒", "🍇", "🍊", "🔔", "💎", "7️⃣"]
@@ -71,14 +70,11 @@ async function spin() {
   }
 
   spinButton.disabled = true
-  lever.style.transform = "translateY(10px)"
   updateBalance(-betAmount)
 
   const finalEmojis = reels.map(() => getRandomEmoji())
 
   await Promise.all(reels.map((reel, index) => animateReel(reel, finalEmojis[index])))
-
-  lever.style.transform = ""
 
   let winAmount = 0
   if (finalEmojis[0] === finalEmojis[1] && finalEmojis[1] === finalEmojis[2]) {
@@ -116,12 +112,22 @@ async function spin() {
 }
 
 spinButton.addEventListener("click", spin)
-lever.addEventListener("click", () => {
-  if (!spinButton.disabled) {
-    spin()
-  }
-})
 
 // Inicjalizacja jackpota
 updateJackpot()
+
+// Obsługa dotykowa dla urządzeń mobilnych
+spinButton.addEventListener("touchstart", (e) => {
+  e.preventDefault() // Zapobiega podwójnemu kliknięciu na urządzeniach dotykowych
+  spin()
+})
+
+// Dostosowanie wysokości kontenera na urządzeniach mobilnych
+function adjustHeight() {
+  const vh = window.innerHeight * 0.01
+  document.documentElement.style.setProperty("--vh", `${vh}px`)
+}
+
+window.addEventListener("resize", adjustHeight)
+adjustHeight() // Wywołaj funkcję na starcie
 
