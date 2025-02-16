@@ -3,28 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruletka Kasynowa 🎰</title>
+    <title>Super Automat do Gry 🎰</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Ruletka Kasynowa 🎰</h1>
-        <div id="balance">Saldo: <span id="balance-amount">10000</span> zł</div>
-        <div class="betting-area">
-            <input type="number" id="bet-amount" placeholder="Kwota zakładu" min="1" max="10000">
-            <select id="bet-color">
-                <option value="red">Czerwony</option>
-                <option value="black">Czarny</option>
-                <option value="green">Zielony</option>
-            </select>
+    <div id="warning-popup" class="popup">
+        <div class="popup-content">
+            <h2>⚠️ Ostrzeżenie o Hazardzie ⚠️</h2>
+            <p>Ta gra zawiera elementy hazardu. Pamiętaj, że hazard może uzależniać i prowadzić do strat finansowych. Graj odpowiedzialnie i ustal sobie limit.</p>
+            <p>Jeśli czujesz, że masz problem z hazardem, skontaktuj się z profesjonalną pomocą.</p>
+            <button id="accept-warning">Rozumiem i chcę kontynuować</button>
         </div>
-        <div class="roulette-wrapper">
-            <div id="roulette-wheel">
-                <div id="ball"></div>
+    </div>
+    <div class="container">
+        <h1>Super Automat do Gry 🎰</h1>
+        <div class="balance-wrapper">
+            <div id="balance">Saldo: <span id="balance-amount">10000</span> zł</div>
+        </div>
+        <div class="slot-machine">
+            <div class="reel-container">
+                <div class="reel" id="reel1"></div>
+                <div class="reel" id="reel2"></div>
+                <div class="reel" id="reel3"></div>
+            </div>
+            <div class="lever-container">
+                <div class="lever" id="lever"></div>
             </div>
         </div>
-        <button id="spin-button">Zakręć!</button>
-        <p id="result"></p>
+        <div class="betting-area">
+            <input type="number" id="bet-amount" placeholder="Kwota zakładu" min="1" max="10000">
+            <button id="spin-button">ZAKRĘĆ!</button>
+        </div>
+        <div id="result"></div>
+        <div class="jackpot">
+            <div class="jackpot-text">JACKPOT:</div>
+            <div id="jackpot-amount">50000 zł</div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>

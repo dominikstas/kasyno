@@ -1,29 +1,69 @@
+const warningPopup = document.getElementById("warning-popup")
+const acceptWarningButton = document.getElementById("accept-warning")
+
+function showWarningPopup() {
+  warningPopup.style.display = "flex"
+}
+
+function hideWarningPopup() {
+  warningPopup.style.display = "none"
+}
+
+acceptWarningButton.addEventListener("click", hideWarningPopup)
+
+// Pokaż popup przy załadowaniu strony
+window.addEventListener("load", showWarningPopup)
+
 let balance = 10000
+let jackpot = 50000
 const balanceElement = document.getElementById("balance-amount")
+const jackpotElement = document.getElementById("jackpot-amount")
 const betAmountInput = document.getElementById("bet-amount")
-const betColorSelect = document.getElementById("bet-color")
 const spinButton = document.getElementById("spin-button")
-const wheel = document.getElementById("roulette-wheel")
-const ball = document.getElementById("ball")
 const resultText = document.getElementById("result")
+const lever = document.getElementById("lever")
+const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")]
+
+const emojis = ["🍎", "🍋", "🍒", "🍇", "🍊", "🔔", "💎", "7️⃣"]
 
 function updateBalance(amount) {
   balance += amount
   balanceElement.textContent = balance
+  balanceElement.style.animation = "pulse 0.5s"
+  setTimeout(() => {
+    balanceElement.style.animation = ""
+  }, 500)
 }
 
-function getRandomNumber() {
-  return Math.floor(Math.random() * 37)
+function updateJackpot() {
+  jackpot += Math.floor(Math.random() * 100) + 50
+  jackpotElement.textContent = jackpot + " zł"
 }
 
-function getColorFromNumber(number) {
-  if (number === 0) return "green"
-  return number % 2 === 0 ? "black" : "red"
+function getRandomEmoji() {
+  return emojis[Math.floor(Math.random() * emojis.length)]
 }
 
-function spin() {
+function animateReel(reel, finalEmoji) {
+  return new Promise((resolve) => {
+    let spins = 0
+    const maxSpins = 20 + Math.floor(Math.random() * 10)
+    const interval = setInterval(() => {
+      reel.textContent = getRandomEmoji()
+      reel.style.animation = "spin 0.2s linear"
+      spins++
+      if (spins >= maxSpins) {
+        clearInterval(interval)
+        reel.textContent = finalEmoji
+        reel.style.animation = ""
+        resolve()
+      }
+    }, 100)
+  })
+}
+
+async function spin() {
   const betAmount = Number.parseInt(betAmountInput.value)
-  const betColor = betColorSelect.value
 
   if (isNaN(betAmount) || betAmount <= 0 || betAmount > balance) {
     alert("Nieprawidłowa kwota zakładu!")
@@ -31,27 +71,57 @@ function spin() {
   }
 
   spinButton.disabled = true
+  lever.style.transform = "translateY(10px)"
   updateBalance(-betAmount)
 
-  const randomNum = getRandomNumber()
-  const resultColor = getColorFromNumber(randomNum)
-  const rotation = 1440 + randomNum * 9.73
+  const finalEmojis = reels.map(() => getRandomEmoji())
 
-  wheel.style.transform = `rotate(${rotation}deg)`
-  ball.style.transform = `translate(-50%, -50%) rotate(${-rotation}deg)`
+  await Promise.all(reels.map((reel, index) => animateReel(reel, finalEmojis[index])))
 
-  setTimeout(() => {
-    if (betColor === resultColor) {
-      const winAmount = betColor === "green" ? betAmount * 35 : betAmount * 2
-      updateBalance(winAmount)
-      resultText.textContent = `Wygrałeś ${winAmount} zł! Wypadło: ${randomNum} (${resultColor})`
+  lever.style.transform = ""
+
+  let winAmount = 0
+  if (finalEmojis[0] === finalEmojis[1] && finalEmojis[1] === finalEmojis[2]) {
+    if (finalEmojis[0] === "7️⃣") {
+      winAmount = jackpot
+      resultText.textContent = "JACKPOT! 🎉🎉🎉"
+      document.body.style.animation = "glow 1s infinite"
+      setTimeout(() => {
+        document.body.style.animation = ""
+      }, 5000)
     } else {
-      resultText.textContent = `Przegrałeś ${betAmount} zł. Wypadło: ${randomNum} (${resultColor})`
+      winAmount = betAmount * 10
+      resultText.textContent = `Wielka wygrana! ${winAmount} zł! 🎉`
     }
+  } else if (
+    finalEmojis[0] === finalEmojis[1] ||
+    finalEmojis[1] === finalEmojis[2] ||
+    finalEmojis[0] === finalEmojis[2]
+  ) {
+    winAmount = betAmount * 2
+    resultText.textContent = `Wygrana! ${winAmount} zł! 😃`
+  } else {
+    resultText.textContent = `Spróbuj ponownie! 😉`
+  }
 
-    spinButton.disabled = false
-  }, 5000)
+  if (winAmount > 0) {
+    updateBalance(winAmount)
+    resultText.style.color = "#ffd700"
+  } else {
+    resultText.style.color = "#ff4500"
+  }
+
+  updateJackpot()
+  spinButton.disabled = false
 }
 
 spinButton.addEventListener("click", spin)
+lever.addEventListener("click", () => {
+  if (!spinButton.disabled) {
+    spin()
+  }
+})
+
+// Inicjalizacja jackpota
+updateJackpot()
 
