@@ -9,8 +9,19 @@
 <body>
     <div class="container">
         <h1>Ruletka Kasynowa 🎰</h1>
+        <div id="balance">Saldo: <span id="balance-amount">10000</span> zł</div>
+        <div class="betting-area">
+            <input type="number" id="bet-amount" placeholder="Kwota zakładu" min="1" max="10000">
+            <select id="bet-color">
+                <option value="red">Czerwony</option>
+                <option value="black">Czarny</option>
+                <option value="green">Zielony</option>
+            </select>
+        </div>
         <div class="roulette-wrapper">
-            <div id="roulette-wheel"></div>
+            <div id="roulette-wheel">
+                <div id="ball"></div>
+            </div>
         </div>
         <button id="spin-button">Zakręć!</button>
         <p id="result"></p>
