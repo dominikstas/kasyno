@@ -1,0 +1,66 @@
+---
+---
+<script client:load>
+  let spinning = false;
+  let result = "🎰";
+  const numbers = Array.from({ length: 37 }, (_, i) => i);
+
+  function spinRoulette() {
+    if (spinning) return;
+    spinning = true;
+    
+    const rouletteEl = document.getElementById("roulette");
+    // Przywracamy domyślny wygląd i wyświetlamy emoji przed animacją
+    rouletteEl.innerText = "🎰";
+    rouletteEl.style.transition = "transform 3s ease-in-out";
+    rouletteEl.style.transform = "rotate(1440deg)";
+    
+    const randomIndex = Math.floor(Math.random() * numbers.length);
+    result = numbers[randomIndex];
+
+    setTimeout(() => {
+      // Resetujemy transformację i wyświetlamy wynik
+      rouletteEl.style.transition = "";
+      rouletteEl.style.transform = "";
+      rouletteEl.innerText = result;
+      spinning = false;
+    }, 3000);
+  }
+</script>
+
+<style>
+  .roulette {
+    width: 160px;
+    height: 160px;
+    background: red;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0 auto;
+  }
+  .button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: gold;
+    border: none;
+    color: black;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  .button:hover {
+    transform: scale(1.05);
+  }
+</style>
+
+<div>
+  <div id="roulette" class="roulette">
+    🎰
+  </div>
+  <button class="button" onClick="spinRoulette()">Zakręć!</button>
+</div>
