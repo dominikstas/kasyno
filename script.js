@@ -24,6 +24,7 @@ const resultText = document.getElementById("result")
 const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")]
 
 const emojis = ["🍎", "🍋", "🍒", "🍇", "🍊", "🔔", "💎", "7️⃣"]
+const weights = [30, 25, 20, 15, 10, 5, 3, 1] // Wagi dla każdego emoji
 
 function updateBalance(amount) {
   balance += amount
@@ -40,7 +41,15 @@ function updateJackpot() {
 }
 
 function getRandomEmoji() {
-  return emojis[Math.floor(Math.random() * emojis.length)]
+  const totalWeight = weights.reduce((a, b) => a + b, 0)
+  let random = Math.random() * totalWeight
+  for (let i = 0; i < emojis.length; i++) {
+    if (random < weights[i]) {
+      return emojis[i]
+    }
+    random -= weights[i]
+  }
+  return emojis[0] // Domyślnie zwróć pierwszy emoji
 }
 
 function animateReel(reel, finalEmoji) {
@@ -77,8 +86,10 @@ async function spin() {
   await Promise.all(reels.map((reel, index) => animateReel(reel, finalEmojis[index])))
 
   let winAmount = 0
+  const jackpotChance = 0.0001 // 0.01% szansa na jackpot
+
   if (finalEmojis[0] === finalEmojis[1] && finalEmojis[1] === finalEmojis[2]) {
-    if (finalEmojis[0] === "7️⃣") {
+    if (finalEmojis[0] === "7️⃣" && Math.random() < jackpotChance) {
       winAmount = jackpot
       resultText.textContent = "JACKPOT! 🎉🎉🎉"
       document.body.style.animation = "glow 1s infinite"
@@ -86,18 +97,26 @@ async function spin() {
         document.body.style.animation = ""
       }, 5000)
     } else {
-      winAmount = betAmount * 10
-      resultText.textContent = `Wielka wygrana! ${winAmount} zł! 🎉`
+      const multiplier = emojis.indexOf(finalEmojis[0]) + 2 // Im rzadszy symbol, tym większy mnożnik
+      winAmount = betAmount * multiplier
+      resultText.textContent = `Wygrana! ${winAmount} zł! 🎉`
     }
   } else if (
     finalEmojis[0] === finalEmojis[1] ||
     finalEmojis[1] === finalEmojis[2] ||
     finalEmojis[0] === finalEmojis[2]
   ) {
-    winAmount = betAmount * 2
-    resultText.textContent = `Wygrana! ${winAmount} zł! 😃`
+    winAmount = Math.floor(betAmount * 1.5) // Zmniejszona wygrana za dwa takie same symbole
+    resultText.textContent = `Mała wygrana! ${winAmount} zł! 😃`
   } else {
-    resultText.textContent = `Spróbuj ponownie! 😉`
+    // Dodajemy małą szansę na minimalną wygraną, nawet jeśli symbole się nie zgadzają
+    if (Math.random() < 0.1) {
+      // 10% szans na minimalną wygraną
+      winAmount = Math.floor(betAmount * 0.5)
+      resultText.textContent = `Mała wygrana! ${winAmount} zł! 😊`
+    } else {
+      resultText.textContent = `Spróbuj ponownie! 😉`
+    }
   }
 
   if (winAmount > 0) {
@@ -107,7 +126,10 @@ async function spin() {
     resultText.style.color = "#ff4500"
   }
 
+  // Zwiększamy jackpot o procent przegranej kwoty
+  jackpot += Math.floor(betAmount * 0.1)
   updateJackpot()
+
   spinButton.disabled = false
 }
 
