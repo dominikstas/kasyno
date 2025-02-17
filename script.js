@@ -153,3 +153,12 @@ function adjustHeight() {
 window.addEventListener("resize", adjustHeight)
 adjustHeight() // Wywołaj funkcję na starcie
 
+const leaveButton = document.getElementById("leave-site")
+leaveButton.addEventListener("click", () => {
+  window.close()
+  // If window.close() doesn't work (e.g., in some browsers), redirect to a blank page
+  if (!window.closed) {
+    window.location.href = "about:blank"
+  }
+})
+

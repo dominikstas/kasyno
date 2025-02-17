@@ -267,3 +267,40 @@ h1 {
   }
 }
 
+#leave-site {
+    background: linear-gradient(45deg, #ff4500, #ff6347);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 5px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+#leave-site:hover {
+    background: linear-gradient(45deg, #ff6347, #ff4500);
+    transform: scale(1.05);
+}
+
+.disclaimer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 480px) {
+    .disclaimer {
+        font-size: 0.7rem;
+        padding: 5px;
+    }
+}
