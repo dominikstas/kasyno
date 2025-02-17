@@ -24,7 +24,7 @@ const resultText = document.getElementById("result")
 const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")]
 
 const emojis = ["🍎", "🍋", "🍒", "🍇", "🍊", "🔔", "💎", "7️⃣"]
-const weights = [30, 25, 20, 15, 10, 5, 3, 1] // Wagi dla każdego emoji
+const weights = [13, 10, 8, 5, 4, 3, 2, 1] // Wagi dla każdego emoji
 
 function updateBalance(amount) {
   balance += amount
