@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const adContainer = document.getElementById("ad-container")
   const adImage = document.getElementById("ad-image")
   const closeAdButton = document.getElementById("close-ad-button")
+  const watchAdButton = document.getElementById("watch-ad-button")
+  const adTimer = document.getElementById("ad-timer")
 
   let balance = 10000
   let jackpot = 50000
@@ -59,14 +61,29 @@ document.addEventListener("DOMContentLoaded", () => {
     adContainer.style.display = "flex"
     closeAdButton.disabled = true
 
-    setTimeout(() => {
-      closeAdButton.disabled = false
-    }, 10000)
+    let timeLeft = 10
+    adTimer.textContent = timeLeft
+
+    const timer = setInterval(() => {
+      timeLeft--
+      adTimer.textContent = timeLeft
+
+      if (timeLeft <= 0) {
+        clearInterval(timer)
+        closeAdButton.disabled = false
+        closeAdButton.textContent = "Odbierz nagrodę!"
+        adTimer.style.display = "none"
+      }
+    }, 1000)
   }
 
   function closeAd() {
     adContainer.style.display = "none"
     updateBalance(2500)
+    adTimer.style.display = "block"
+    closeAdButton.textContent = "Poczekaj 10s"
+    resultText.textContent = "Otrzymano 2500 zł za obejrzenie reklamy! 🎉"
+    resultText.style.color = "#ffd700"
   }
 
   function animateReel(reel, finalEmoji) {
@@ -163,6 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
   })
   spinButton.addEventListener("click", spin)
   closeAdButton.addEventListener("click", closeAd)
+  watchAdButton.addEventListener("click", showAd)
 
   // Initialize
   showWarningPopup()
